@@ -1,0 +1,4 @@
+## LexicalPermutation
+
+- 辞書順の次の要素を探す順列検索
+
