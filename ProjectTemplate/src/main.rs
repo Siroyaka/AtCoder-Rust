@@ -1,3 +1,9 @@
+#[allow(unused_imports)]
+use std::collections::VecDeque;
+#[allow(unused_imports)]
+use std::cmp;
+#[allow(unused_imports)]
+use std::collections::HashMap;
 
 #[allow(unused_macros)]
 macro_rules! input {
