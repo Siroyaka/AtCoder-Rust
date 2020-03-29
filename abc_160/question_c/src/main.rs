@@ -65,7 +65,13 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        n: i32
+        k: i32,
+        n: usize,
+        v: [i32; n]
     }
-    println!("{}", n);
+    let mut max_range = v[0] - v[n-1] + k;
+    for i in 0..n-1 {
+        max_range = cmp::max(max_range, v[i+1] - v[i]);
+    }
+    println!("{}", k - max_range);
 }

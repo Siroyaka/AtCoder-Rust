@@ -70,57 +70,20 @@ fn main() {
         r_c: usize,
         g_c: usize,
         n_c: usize,
-        r_v: [i32; r_c],
-        g_v: [i32; g_c],
-        n_v: [i32; n_c]
+        r_v: [i64; r_c],
+        g_v: [i64; g_c],
+        n_v: [i64; n_c]
     }
+    let top = r + g;
     let mut r_v = r_v;
-    r_v.sort();
+    r_v.sort_by(|a, b| b.cmp(a));
+    let r_tops = r_v[..r].to_vec();
     let mut g_v = g_v;
-    g_v.sort();
-    let mut n_v = n_v;
-    n_v.sort();
-    let mut answer = 0;
-    let mut r_count = 0;
-    let mut g_count = 0;
-    let mut r_ind = 0;
-    let mut g_ind = 0;
-    let mut n_ind = 0;
-    while r_count < r || g_count < g {
-        let nitem = if n_ind < n_c {*&n_v[n_c - n_ind - 1]} else {0};
-        while r_count < r {
-            let p = r_c - r_ind - 1;
-            if r_v[p] < nitem {break;}
-            answer += r_v[p];
-            r_count += 1;
-            r_ind += 1;
-        }
-        while g_count < g {
-            let p = g_c - g_ind - 1;
-            if g_v[p] < nitem {break;}
-            answer += g_v[p];
-            g_count += 1;
-            g_ind += 1;
-        }
-        while r_count < r || g_count < g {
-            if n_ind == n_c {break;}
-            answer+=n_v[n_c - n_ind - 1];
-            n_ind += 1;
-            if r_count == r && g_count < g {
-                g_count += 1;
-                continue;
-            }
-            if g_count == g && r_count < r {
-                r_count += 1;
-                continue;
-            }
-            if r_v[r_ind] > g_v[g_ind] {
-                r_count += 1;
-            } else {
-                g_count += 1;
-            }
-        }
-    }
+    g_v.sort_by(|a, b| b.cmp(a));
+    let g_tops = g_v[0..g].to_vec();
 
+    let mut alls = [r_tops, g_tops, n_v].concat();
+    alls.sort_by(|a, b| b.cmp(a));
+    let answer = alls[..top].iter().fold(0, |acc, x| acc+x);
     println!("{}", answer);
 }
