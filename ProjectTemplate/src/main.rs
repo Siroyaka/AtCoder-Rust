@@ -14,10 +14,10 @@ macro_rules! input {
     };
     ($($r:tt)*) => {
         let stdin = std::io::stdin();
-        let mut bytes = std::io::Read::bytes(std::io::BufReader::new(stdin.lock()));
+        let mut bytes = std::io::read::bytes(std::io::bufreader::new(stdin.lock()));
         #[allow(unused_variables)]
         #[allow(unused_mut)]
-        let mut next = move || -> String{
+        let mut next = move || -> string{
             bytes
                 .by_ref()
                 .map(|r|r.unwrap() as char)
@@ -38,6 +38,11 @@ macro_rules! input_inner {
         let $var = read_value!($next, $t);
         input_inner!{$next $($r)*}
     };
+ 
+    ($next:expr, mut $var:ident : $t:tt $($r:tt)*) => {
+        let mut $var = read_value!($next, $t);
+        input_inner!{$next $($r)*}
+    };
 }
 
 #[allow(unused_macros)]
@@ -47,19 +52,30 @@ macro_rules! read_value {
     };
 
     ($next:expr, [ $t:tt ; $len:expr ]) => {
-        (0..$len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
+        (0..$len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
     };
-
+ 
+    ($next:expr, [ $t:tt ]) => {
+        {
+            let len = read_value!($next, usize);
+            (0..len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
+        }
+    };
+ 
     ($next:expr, chars) => {
-        read_value!($next, String).chars().collect::<Vec<char>>()
+        read_value!($next, string).chars().collect::<vec<char>>()
     };
-
+ 
+    ($next:expr, bytes) => {
+        read_value!($next, string).into_bytes()
+    };
+ 
     ($next:expr, usize1) => {
         read_value!($next, usize) - 1
     };
-
+ 
     ($next:expr, $t:ty) => {
-        $next().parse::<$t>().expect("Parse error")
+        $next().parse::<$t>().expect("parse error")
     };
 }
 
