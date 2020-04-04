@@ -84,6 +84,5 @@ fn main() {
         s: String,
         n: usize
     }
-    println!("{}", s);
     println!("{}", n);
 }
