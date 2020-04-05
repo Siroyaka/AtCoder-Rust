@@ -81,8 +81,24 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
         n: usize
     }
-    println!("{}", n);
+
+    let mut queue: VecDeque<i64> = VecDeque::new();
+    for i in 1..10 {
+        queue.push_back(i);
+    }
+    for _ in 0..n-1 {
+        let x = queue.pop_front().unwrap();
+        let nx = x * 10 + x % 10;
+        if x % 10 != 0 {
+            queue.push_back(nx - 1);
+        }
+        queue.push_back(nx);
+        if x % 10 != 9 {
+            queue.push_back(nx + 1);
+        }
+    }
+
+    println!("{}", queue.pop_front().unwrap());
 }

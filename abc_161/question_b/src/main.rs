@@ -52,18 +52,18 @@ macro_rules! read_value {
     };
 
     ($next:expr, [ $t:tt ; $len:expr ]) => {
-        (0..$len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
+        (0..$len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
     };
  
     ($next:expr, [ $t:tt ]) => {
         {
             let len = read_value!($next, usize);
-            (0..len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
+            (0..len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
         }
     };
  
     ($next:expr, chars) => {
-        read_value!($next, string).chars().collect::<vec<char>>()
+        read_value!($next, string).chars().collect::<Vec<char>>()
     };
  
     ($next:expr, bytes) => {
@@ -81,8 +81,12 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize
+        n: usize,
+        m: usize,
+        v: [usize; n]
     }
-    println!("{}", n);
+    let all: usize = v.iter().sum();
+    let s = all / (4 * m) + if all % (4 * m) > 0 {1} else {0};
+    let a = v.iter().filter(|&&x| x >= s).count();
+    println!("{}", if a >= m {"Yes"} else {"No"});
 }

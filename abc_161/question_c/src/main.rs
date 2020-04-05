@@ -78,11 +78,21 @@ macro_rules! read_value {
         $next().parse::<$t>().expect("parse error")
     };
 }
-
+ 
 fn main() {
     input!{
-        s: String,
-        n: usize
+        a: i64,
+        b: i64
     }
-    println!("{}", n);
+    let answer = if a == 0 {
+        0
+    } else if a % b == 0 {
+        0
+    } else if b % a == 0 {
+        a
+    } else {
+        let c = a % b;
+        cmp::min(c, i64::abs(c - b))
+    };
+    println!("{}", answer);
 }
