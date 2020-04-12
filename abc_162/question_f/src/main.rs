@@ -52,18 +52,18 @@ macro_rules! read_value {
     };
 
     ($next:expr, [ $t:tt ; $len:expr ]) => {
-        (0..$len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
+        (0..$len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
     };
  
     ($next:expr, [ $t:tt ]) => {
         {
             let len = read_value!($next, usize);
-            (0..len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
+            (0..len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
         }
     };
  
     ($next:expr, chars) => {
-        read_value!($next, String).chars().collect::<vec<char>>()
+        read_value!($next, String).chars().collect::<Vec<char>>()
     };
  
     ($next:expr, bytes) => {
@@ -81,9 +81,15 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize
+        n: usize,
+        arr: [i64; n]
     }
-    println!("{}", s);
-    println!("{}", n);
+    let mut dp = vec![std::i64::MIN; n];
+    dp[0] = arr[0];
+    dp[1] = arr[1];
+    for i in 2..n {
+        dp[i] = cmp::max(cmp::max(cmp::max(dp[i - 2] + arr[i], dp[i - 2]), dp[i - 1]), arr[i]);
+    }
+
+    println!("{}", dp[n - 1]);
 }

@@ -52,18 +52,18 @@ macro_rules! read_value {
     };
 
     ($next:expr, [ $t:tt ; $len:expr ]) => {
-        (0..$len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
+        (0..$len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
     };
  
     ($next:expr, [ $t:tt ]) => {
         {
             let len = read_value!($next, usize);
-            (0..len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
+            (0..len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
         }
     };
  
     ($next:expr, chars) => {
-        read_value!($next, String).chars().collect::<vec<char>>()
+        read_value!($next, String).chars().collect::<Vec<char>>()
     };
  
     ($next:expr, bytes) => {
@@ -79,11 +79,32 @@ macro_rules! read_value {
     };
 }
 
+fn uc(a : i64, b : i64) -> i64{
+    fn ucc(la : i64, sm : i64) -> i64 {
+        let ans = la % sm;
+        if ans == 0 {
+            return sm;
+        }
+        ucc(sm, ans)
+    }
+    if a > b {ucc(a, b)} else {ucc(b, a)}
+}
+
 fn main() {
     input!{
-        s: String,
         n: usize
     }
-    println!("{}", s);
-    println!("{}", n);
+    let mut answer = 0;
+    for i in 1..n+1 {
+        let ii = i as i64;
+        for j in 1..n+1 {
+            let jj = j as i64;
+            let uc1 = uc(ii, jj);
+            for k in 1..n+1 {
+                let kk = k as i64;
+                answer += uc(uc1, kk);
+            }
+        }
+    }
+    println!("{}", answer);
 }

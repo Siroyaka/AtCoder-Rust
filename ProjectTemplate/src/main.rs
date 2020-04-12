@@ -52,18 +52,18 @@ macro_rules! read_value {
     };
 
     ($next:expr, [ $t:tt ; $len:expr ]) => {
-        (0..$len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
+        (0..$len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
     };
  
     ($next:expr, [ $t:tt ]) => {
         {
             let len = read_value!($next, usize);
-            (0..len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
+            (0..len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
         }
     };
  
     ($next:expr, chars) => {
-        read_value!($next, String).chars().collect::<vec<char>>()
+        read_value!($next, String).chars().collect::<Vec<char>>()
     };
  
     ($next:expr, bytes) => {

@@ -52,18 +52,18 @@ macro_rules! read_value {
     };
 
     ($next:expr, [ $t:tt ; $len:expr ]) => {
-        (0..$len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
+        (0..$len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
     };
  
     ($next:expr, [ $t:tt ]) => {
         {
             let len = read_value!($next, usize);
-            (0..len).map(|_| read_value!($next, $t)).collect::<vec<_>>()
+            (0..len).map(|_| read_value!($next, $t)).collect::<Vec<_>>()
         }
     };
  
     ($next:expr, chars) => {
-        read_value!($next, String).chars().collect::<vec<char>>()
+        read_value!($next, String).chars().collect::<Vec<char>>()
     };
  
     ($next:expr, bytes) => {
@@ -81,9 +81,50 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize
+        n: usize,
+        s: chars
     }
-    println!("{}", s);
-    println!("{}", n);
+    let s = s.into_iter().rev().collect::<Vec<_>>();
+    let mut answer: i64 = 0;
+    for i in 0..n {
+        let own = s[i];
+        let mut count_a = 0;
+        let mut a = 's';
+        let mut count_b = 0;
+        let mut queue_a: VecDeque<usize> = VecDeque::new();
+        let mut queue_b: VecDeque<usize> = VecDeque::new();
+        for j in i+1..n {
+            let i_a = if queue_a.len() == 0 {0} else {queue_a[0]};
+            let i_b = if queue_b.len() == 0 {0} else {queue_b[0]};
+            if s[j] != own && a == 's' {
+                a = s[j];
+                count_a += 1;
+                queue_a.push_back(j + (j - i));
+                continue;
+            }
+
+            let mut mul_a = count_a;
+            let mut mul_b = count_b;
+            if i_a == j {
+                queue_a.pop_front();
+                mul_a = cmp::max(0, mul_a - 1);
+            }
+            if i_b == j {
+                queue_b.pop_front();
+                mul_b = cmp::max(0, mul_b - 1);
+            }
+            if s[j] == own {continue;}
+
+            if s[j] == a {
+                count_a += 1;
+                queue_a.push_back(j + (j - i));
+                answer += mul_b;
+                continue;
+            }
+            count_b += 1;
+            queue_b.push_back(j + (j - i));
+            answer += mul_a;
+        }
+    }
+    println!("{}", answer);
 }
