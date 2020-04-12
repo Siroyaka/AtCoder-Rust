@@ -11,7 +11,7 @@ $LOGFILE = Join-Path $PSScriptRoot "new.ps1.log";
 $TEMPLATESOLUPATH = Join-Path $PSScriptRoot "SolutionTemplate\";
 $TEMPLATEPROJPATH = Join-Path $PSScriptRoot "ProjectTemplate\";
 $PROGRAMFILENAME = "src/main.rs";
-$ENTRYPOINT_ROW = "60";
+$ENTRYPOINT_ROW = "82";
 
 <#
     ## 内容
