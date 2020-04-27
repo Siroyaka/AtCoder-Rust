@@ -81,9 +81,8 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize
+        s: i32,
+        n: i32
     }
-    println!("{}", s);
-    println!("{}", n);
+    println!("{}", if s > n {"safe"} else {"unsafe"});
 }

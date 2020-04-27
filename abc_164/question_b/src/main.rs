@@ -81,9 +81,16 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize
+        a: i32,
+        b: i32,
+        c: i32,
+        d: i32,
     }
-    println!("{}", s);
-    println!("{}", n);
+    let mut a = a;
+    let mut c = c;
+    while a > 0 && c > 0 {
+        c = c - b;
+        a = a - d;
+    }
+    println!("{}", if c <= 0 {"Yes"} else {"No"});
 }

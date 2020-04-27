@@ -81,9 +81,12 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize
+        n: usize,
+        v: [String; n]
     }
-    println!("{}", s);
-    println!("{}", n);
+    let mut set: std::collections::HashSet<String> = std::collections::HashSet::new();
+    for i in v {
+        set.insert(i);
+    }
+    println!("{}", set.len());
 }
