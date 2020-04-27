@@ -81,9 +81,28 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize
+        s: chars,
     }
-    println!("{}", s);
-    println!("{}", n);
+    let n = s.len();
+    let m = 13;
+
+    let mut ans = 0;
+
+    let mut tbl = vec![0; m];
+
+    for i in 0..n {
+        let cur = ((s[i] as u8) - b'0') as usize;
+        let mut ntbl = vec![0; m];
+ 
+        for j in 0..m {
+            ntbl[(j * 10 + cur) % m] += tbl[j];
+        }
+        println!("{:?}", ntbl);
+
+        ans += ntbl[0];
+        ntbl[cur % m] += 1;
+        tbl = ntbl;
+    }
+    println!("{}", ans);
+
 }
