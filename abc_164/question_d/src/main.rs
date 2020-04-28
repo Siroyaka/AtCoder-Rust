@@ -84,7 +84,7 @@ fn main() {
         s: chars,
     }
     let n = s.len();
-    let m = 13;
+    let m = 2019;
 
     let mut ans = 0;
 
@@ -97,7 +97,6 @@ fn main() {
         for j in 0..m {
             ntbl[(j * 10 + cur) % m] += tbl[j];
         }
-        println!("{:?}", ntbl);
 
         ans += ntbl[0];
         ntbl[cur % m] += 1;
