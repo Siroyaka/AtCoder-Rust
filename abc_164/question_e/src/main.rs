@@ -120,10 +120,7 @@ fn main() {
     }
 
     let mut dist: Vec<Vec<i64>> = vec![vec![std::i64::MAX; 2500]; n];
-    let mut alreadys: Vec<Vec<bool>> = vec![vec![false; 2500]; n];
-    for i in 1..2500 {
-        alreadys[0][i] = true;
-    }
+    let mut alreadys: Vec<Vec<bool>> = vec![vec![false; 2501]; n];
     let mut heep = BinaryHeap::new();
     heep.push(State{time: 0, coin: s, node: 0, costnode: 0});
 
@@ -132,20 +129,28 @@ fn main() {
         alreadys[state.node][state.costnode] = true;
         
         for &(n_node, s_cost, m_cost) in &graph[state.node] {
-            for m_cost in 0..n_node*50 {
-                if alreadys[n_node][m_cost] {continue;}
+            for n_rest in 0..50+n_node*50 {
+                if alreadys[n_node][n_rest] {continue;}
                 let n_time;
                 let n_coin;
-                let nx_cost = s_cost + m_cost as i64;
+                let nx_cost = s_cost + n_rest as i64;
                 if state.coin < nx_cost {
                     let (c_coin, c_time) = nodes[state.node];
                     let times = (nx_cost - state.coin) / c_coin 
                         + if (nx_cost - state.coin) % c_coin == 0 {0} else {1};
-                    
+                    n_time = state.time + m_cost + (times * c_time);
+                    n_coin = c_coin * times + state.coin - s_cost;
+                } else {
+                    n_time = state.time + m_cost;
+                    n_coin = state.coin - s_cost;
                 }
-                dist[n_node][m_cost] = cmp::min(dist[n_node][m_cost], n_time);
+                dist[n_node][n_rest] = cmp::min(dist[n_node][n_rest], n_time);
+                heep.push(State{time: n_time, coin: n_coin, node: n_node, costnode: n_rest})
             }
         }
+    }
+    for i in 1..n {
+        println!("{}", dist[i][0]);
     }
 
 }
