@@ -84,9 +84,8 @@ macro_rules! read_value {
 #[derive(Copy, Clone, Eq, PartialEq)]
 struct State {
     time: i64,
-    coin: i64,
+    coin: usize,
     node: usize,
-    costnode: usize,
 }
 
 impl Ord for State {
@@ -94,7 +93,6 @@ impl Ord for State {
         other.time.cmp(&self.time)
         .then_with(|| self.coin.cmp(&other.coin))
         .then_with(|| self.node.cmp(&other.node))
-        .then_with(|| self.costnode.cmp(&other.costnode))
     }
 }
 
@@ -109,48 +107,66 @@ fn main() {
         n: usize,
         m: usize,
         s: i64,
-        l: [(usize, usize, i64, i64); m],
+        l: [(usize, usize, usize, i64); m],
         nodes: [(i64, i64); n]
     }
-    let mut graph: Vec<Vec<(usize, i64, i64)>> = vec![vec![]; n];
+    let max_cost = n * 50;
+    let s = cmp::min(max_cost, s as usize);
+    let mut graph: Vec<Vec<(usize, usize, i64)>> = vec![vec![]; n];
     for i in 0..m {
         let (f, t, s_cost, m_cost) = l[i];
         graph[f-1].push((t-1, s_cost, m_cost));
         graph[t-1].push((f-1, s_cost, m_cost));
     }
 
-    let mut dist: Vec<Vec<i64>> = vec![vec![std::i64::MAX; 2500]; n];
-    let mut alreadys: Vec<Vec<bool>> = vec![vec![false; 2501]; n];
+    let mut dist = vec![vec![None; max_cost + 1]; n];
     let mut heep = BinaryHeap::new();
-    heep.push(State{time: 0, coin: s, node: 0, costnode: 0});
+    dist[0][s] = Some(0);
+    heep.push(State{time: 0, coin: s, node: 0});
 
     while let Some(state) = heep.pop() {
-        if alreadys[state.node][state.costnode] {continue;}
-        alreadys[state.node][state.costnode] = true;
-        
-        for &(n_node, s_cost, m_cost) in &graph[state.node] {
-            for n_rest in 0..50+n_node*50 {
-                if alreadys[n_node][n_rest] {continue;}
-                let n_time;
-                let n_coin;
-                let nx_cost = s_cost + n_rest as i64;
-                if state.coin < nx_cost {
-                    let (c_coin, c_time) = nodes[state.node];
-                    let times = (nx_cost - state.coin) / c_coin 
-                        + if (nx_cost - state.coin) % c_coin == 0 {0} else {1};
-                    n_time = state.time + m_cost + (times * c_time);
-                    n_coin = c_coin * times + state.coin - s_cost;
-                } else {
-                    n_time = state.time + m_cost;
-                    n_coin = state.coin - s_cost;
-                }
-                dist[n_node][n_rest] = cmp::min(dist[n_node][n_rest], n_time);
-                heep.push(State{time: n_time, coin: n_coin, node: n_node, costnode: n_rest})
+        let (node, time, coin) = (state.node, state.time, state.coin);
+
+        // dist[node][coin]にはNoneが入ることはないのでその確認用のassert
+        assert!(dist[node][coin].is_some());
+        if dist[node][coin] != Some(time) {
+            continue;
+        }
+
+        // 自分のノードで両替1回した場合の時間とコイン量を保持しておく
+        let (ex_c, ex_t) = nodes[node];
+        let ex_c = cmp::min(max_cost, ex_c as usize);
+        let ex_coin = cmp::min(max_cost, coin + ex_c);
+        let ex_time = time + ex_t;
+        if (dist[node][ex_coin].is_some() && dist[node][ex_coin] > Some(ex_time)) || !dist[node][ex_coin].is_some() {
+            dist[node][ex_coin] = Some(ex_time);
+            heep.push(State{time: ex_time, coin: ex_coin, node: node});
+        }
+
+        // 行き先のノードの状態を更新する
+        for &(next, coin_cost, time_cost) in &graph[node] {
+            // そもそも行けない
+            if coin < coin_cost {continue;}
+
+            let next_coin = coin - coin_cost;
+            let next_time = time + time_cost;
+
+            // 最良ではない
+            if dist[next][next_coin].is_some() && dist[next][next_coin] <= Some(next_time) {
+                continue;
             }
+
+            dist[next][next_coin] = Some(next_time);
+            heep.push(State{time: next_time, coin: next_coin, node: next});
         }
     }
     for i in 1..n {
-        println!("{}", dist[i][0]);
+        let mut min_cost = std::i64::MAX;
+        for &p in &dist[i] {
+            if let Some(item) = p {
+                min_cost = cmp::min(min_cost, item);
+            }
+        }
+        println!("{}", min_cost);
     }
-
 }
