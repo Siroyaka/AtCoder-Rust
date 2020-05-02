@@ -81,9 +81,14 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize
+        n: f64
     }
-    println!("{}", s);
-    println!("{}", n);
+    let mut p = 100.0;
+    let mut count = 0;
+    while p < n {
+        count+=1;
+        p *= 1.01;
+        p = p as i64 as f64;
+    }
+    println!("{}", count);
 }

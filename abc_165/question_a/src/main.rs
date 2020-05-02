@@ -81,9 +81,18 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize
+        k: usize,
+        a: usize,
+        b: usize,
     }
-    println!("{}", s);
-    println!("{}", n);
+    let mut answer = false;
+    let mut a = a;
+    while a <= b {
+        if a % k == 0 {
+            answer = true;
+            break;
+        }
+        a+=1;
+    }
+    println!("{}", if answer {"OK"} else {"NG"});
 }
