@@ -82,7 +82,7 @@ macro_rules! read_value {
 fn main() {
     input!{
         s: String,
-        n: usize
+        n: usize,
     }
     println!("{}", s);
     println!("{}", n);
