@@ -79,11 +79,56 @@ macro_rules! read_value {
     };
 }
 
+fn factorial(a: usize) -> usize {
+    let mut m = a;
+    let mut ans = 1;
+    while m > 1 {
+        ans *= m;
+        m -= 1;
+    };
+    ans
+}
+
+fn multi_choose(size: usize, max_value: usize) -> Vec<Vec<usize>> {
+    let len = factorial(size + max_value - 1) / factorial(size) / factorial(max_value - 1);
+    let mut ans = Vec::new();
+    ans.push(vec![max_value; size]);
+    let mut hold = vec![max_value; size];
+    for _ in 0..len-1 {
+        let mut v = 0;
+        loop {
+            hold[v] -= 1;
+            if hold[v] == 0 {
+                hold[v] = max_value;
+                v += 1;
+                continue;
+            }
+            break;
+        }
+        for i in 1..size {
+            hold[size - i - 1] = cmp::min(hold[size - i - 1], hold[size - i]);
+        }
+        ans.push(hold.to_vec());
+    }
+    ans
+}
+
 fn main() {
     input!{
-        s: String,
-        n: usize
+        n: usize,
+        m: usize,
+        q: usize,
+        v: [(usize1, usize1, usize, i64); q]
     }
-    println!("{}", s);
-    println!("{}", n);
+
+    let t = multi_choose(n, m);
+    let mut ans = 0;
+    for i in t {
+        let mut l = 0;
+        for &(a, b, c, d) in &v {
+            if i[b] - i[a] == c { l += d; }
+        }
+        ans = cmp::max(ans, l);
+    }
+    println!("{}", ans);
 }
