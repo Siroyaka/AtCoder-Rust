@@ -81,9 +81,28 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize
+        n: usize,
+        map: [(usize1, usize1, i64); n-1]
     }
-    println!("{}", s);
-    println!("{}", n);
+    let mut graph = vec![vec![]; n];
+    for &(a, b, l) in &map {
+        graph[a].push((b, l));
+        graph[b].push((a, l));
+    }
+    let mut queue = VecDeque::new();
+    let mut p = vec![-1; n];
+    p[0] = 0;
+    queue.push_back(0);
+    while let Some(x) = queue.pop_front() {
+        let c = p[x];
+        for &(m, l) in &graph[x] {
+            if p[m] != -1 {continue;}
+            let next = ((l % 2) + c) % 2;
+            p[m] = next;
+            queue.push_back(m);
+        }
+    }
+    for i in p {
+        println!("{}", i);
+    }
 }
