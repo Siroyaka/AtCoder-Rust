@@ -81,9 +81,33 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
         n: usize,
+        k: i64,
+        arr: [usize1; n]
     }
-    println!("{}", s);
-    println!("{}", n);
+    let mut dist = vec![-1; n];
+    let mut queue = VecDeque::new();
+    let mut to = 0;
+    let mut loopstartindex = 0;
+    let mut loopendindex = 0;
+    dist[0] = 0;
+    queue.push_back(0);
+    for i in 1..n+1 {
+        let to2 = arr[to];
+        if dist[to2] != -1 {
+            loopstartindex = dist[to2];
+            break;
+        }
+        dist[to2] = i as i64;
+        queue.push_back(to2);
+        to = to2;
+        loopendindex = i;
+    }
+    let loopsize = loopendindex as i64 + 1 - loopstartindex;
+    let distsize_without_loop = if k > loopstartindex {(k - loopstartindex) % loopsize + loopstartindex} else {k};
+    for _ in 0..distsize_without_loop {
+        queue.pop_front();
+    }
+
+    println!("{}", queue[0] + 1);
 }

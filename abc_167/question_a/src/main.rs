@@ -81,9 +81,9 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize,
+        s: chars,
+        n: chars,
     }
-    println!("{}", s);
-    println!("{}", n);
+    let f = (0..s.len()).any(|i| s[i] != n[i]);
+    println!("{}", if f {"No"} else {"Yes"});
 }

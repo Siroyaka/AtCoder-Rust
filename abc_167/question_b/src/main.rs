@@ -81,9 +81,12 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
-        n: usize,
+        a: i64,
+        b: i64,
+        _c: i64,
+        k: i64,
     }
-    println!("{}", s);
-    println!("{}", n);
+    let ans = cmp::min(a, k);
+    let v = cmp::max(k - a - b, 0);
+    println!("{}", ans - v);
 }

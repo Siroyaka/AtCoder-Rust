@@ -81,9 +81,28 @@ macro_rules! read_value {
 
 fn main() {
     input!{
-        s: String,
         n: usize,
+        m: usize,
+        xx: i64,
+        bd: [(i64, [i64; m]); n]
     }
-    println!("{}", s);
-    println!("{}", n);
+    let mut f = false;
+    let mut ans = std::i64::MAX;
+    for i in 0..1<<n {
+        let mut hold = 0;
+        let mut ar = vec![0; m];
+        for k in 0..n {
+            let t = i & (1<<k);
+            if t > 0 {
+                let (c, d) = &bd[k];
+                hold += c;
+                (0..m).for_each(|x| ar[x] += d[x]);
+            }
+        }
+        if !ar.iter().any(|&x| x < xx) {
+            f = true;
+            ans = cmp::min(ans, hold);
+        }
+    }
+    println!("{}", if f {ans} else {-1})
 }
